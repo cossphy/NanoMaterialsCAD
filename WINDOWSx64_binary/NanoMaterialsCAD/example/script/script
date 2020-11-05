@@ -1,0 +1,16 @@
+for 1:10
+	fopen("..\example\script/POSCAR")
+	rand(0.1)
+	randSelection%(0.5)
+	changeElement(Mo)	
+	save("..\example\script\Fe-Mo_50-50\POSCAR$i")
+	restart
+endfor
+exit
+#exit the script
+
+#----------------------------------------------#
+# i is a build in variable.
+# while you are in a loop i is the iterator.
+# use it as $i
+#----------------------------------------------#
