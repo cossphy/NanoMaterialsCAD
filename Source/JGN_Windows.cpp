@@ -2140,7 +2140,7 @@ LRESULT __stdcall HookCallback(int nCode, WPARAM wParam, LPARAM lParam)
 
 						fgets(jgncmdfline, 500, jgncmdfile);
 
-						while ((jgncmdfline[0] != 'e' && jgncmdfline[1] != 'x' && jgncmdfline[2] != 'i' && jgncmdfline[3] != 't'))
+						while ((jgncmdfline[0] != 'e' || jgncmdfline[1] != 'x' || jgncmdfline[2] != 'i' || jgncmdfline[3] != 't'))
 						{
 							for (i = 0; i < 500; i++)
 							{
@@ -4121,6 +4121,75 @@ void jgnCommands(LPTSTR ttt, int d)
 		strcpy(inpf, rstr.c_str());//for legacy reasons
 		JGN_DropFile(rstr.c_str());
 		jgn_file_dropd = true;
+		goto peintit;
+	}
+
+	//char *test4 = "placerandomly(";
+	for (i = 0; i < 14; i++)
+	{
+		if (test1[21][i] == ttt[i])
+		{
+
+		}
+		else
+		{
+			i = 100;
+		}
+	}
+	if (i == 14)
+	{
+		//TODO: stupid proof
+		okrender = 1;
+
+		help = (char*)(ttt + 14);
+		jgn::string rstr = jgn::LPTSTR2string((LPTSTR)help, ')');
+		float min_dist = std::stoi(rstr.c_str());
+		
+		jgn::vec3 x, y, z;
+		jgn::vec3 position;
+
+		bool done = false;
+
+		while (!done)
+		{
+			//assume we are done
+			done = true;
+
+			srand(std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now().time_since_epoch()).count());
+			x = vs.group[vs._isimulationBox].primitiveVec[0] * (rand() / (float)RAND_MAX) * 0.8;
+			srand(std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now().time_since_epoch()).count() + 1);
+			y = vs.group[vs._isimulationBox].primitiveVec[1] * (rand() / (float)RAND_MAX) * 0.8;
+			srand(std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now().time_since_epoch()).count() + 2);
+			z = vs.group[vs._isimulationBox].primitiveVec[2] * (rand() / (float)RAND_MAX) * 0.8;
+
+			//this is the random position
+			position = x + y + z;
+
+			for (int g = 0; g < vs.N_groups; g++)
+			{
+				for (int i = 0; i < vs.group[g].N_atoms; i++)
+				{
+					if (jgn::dist3dSquare(position.x, vs.group[g].position[i].x) < min_dist)
+					{
+						done = false;
+					}
+				}
+			}
+		}
+		
+		vs.group[0].N_atoms++;
+		vs.group[0].color.push_back(vs.group[0].color[vs.group[0].N_atoms - 2]);
+		vs.group[0].iscut.push_back(false);
+		vs.group[0].isdeleted.push_back(false);
+		vs.group[0].ishovered.push_back(false);
+		vs.group[0].isSelected.push_back(false);
+		vs.group[0].number.push_back(vs.group[0].number[vs.group[0].N_atoms - 2]);
+		vs.group[0].N_atoms_per_type[vs.group[0]._N_types - 1]++;
+		vs.group[0].position.push_back(position);
+		vs.group[0].radius.push_back(vs.group[0].radius[vs.group[0].N_atoms - 2]);
+		vs.group[0].selective_dynamics.push_back(vs.group[0].selective_dynamics[vs.group[0].N_atoms - 2]);
+		vs.group[0].type.push_back(vs.group[0].type[vs.group[0].N_atoms - 2]);
+		vs.group[0].weight.push_back(vs.group[0].weight[vs.group[0].N_atoms - 2]);
 		goto peintit;
 	}
 
